@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project name="Signavio Explorer" default="explorer.build">
+	<property name="dir.main" value=".." />
+	<loadproperties srcFile="${dir.main}/build.properties" />
+
+	<property name="dir.conf" value="${dir.main}/configuration" />
+	<property name="dir.conf.skin" value="${dir.conf}/${configuration}/skin" />
+
+	<target name="explorer.build">
+		<copy todir="src" overwrite="true">
+			<fileset dir="${dir.conf.skin}">
+				<include name="**/*.*" />
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="explorer.clean">
+		<delete verbose="true">
+			<fileset dir="src">
+				<present targetdir="${dir.conf.skin}" />
+			</fileset>
+		</delete>
+	</target>
+</project>

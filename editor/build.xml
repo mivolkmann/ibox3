@@ -10,6 +10,14 @@
 	<property name="jsdoc-toolkit" value="jsdoc-toolkit" />
 	<property name="target" value="target" />
 
+	<property name="dir.main" value=".." />
+
+	<loadproperties srcFile="${dir.main}/build.properties" />
+
+	<property name="dir.conf" value="${dir.main}/configuration" />
+	<property name="dir.conf.editor" value="${dir.conf}/${configuration}/editor" />
+	<property name="dir.conf.build" value="${dir.conf}/build" />
+
 	<!-- parses plugin xml-->
 	<xmlproperty file="${src}/scripts/Plugins/plugins.xml" collapseAttributes="true" />
 
@@ -45,9 +53,20 @@
 		<delete dir="${target}" />
 		<delete dir="${buildroot}" />
 		<delete dir="buildApps/bin" />
+		<delete file="${src}/scripts/Plugins/plugins.xml" />
+		<delete file="${src}/scripts/Plugins/version.js" />
+		<delete file="data/stencilsets/stencilsets.json" />
+		<delete file="data/stencilsets/extensions/extensions.json" />
 	</target>
 
-	<target name="com.signavio.editor.copy.staticressources">
+	<target name="editor.copy.configuration">
+		<copy file="${dir.conf.editor}/plugins.xml" tofile="${src}/scripts/Plugins/plugins.xml" overwrite="true"/>
+		<copy file="${dir.conf.editor}/stencilsets.json" todir="data/stencilsets/" />
+		<copy file="${dir.conf.editor}/extensions.json" todir="data/stencilsets/extensions/" />
+		<copy file="${dir.conf.build}/version.js" todir="${src}/scripts/Plugins/" overwrite="true" />
+	</target>
+
+	<target name="com.signavio.editor.copy.staticressources" depends="editor.copy.configuration">
 
 		<copy todir='${build}' file="${src}/scripts/Plugins/plugins.xml" />
 

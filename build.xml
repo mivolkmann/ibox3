@@ -9,6 +9,7 @@
 	<property name="platform" value="platform" />
 	<property name="explorer" value="explorer" />
 	<property name="config" value="configuration" />
+	<property name="dir.api" value="api" />
 
 	<!-- INTERNAL TARGETS -->
 	<target name="clean">
@@ -16,36 +17,32 @@
 		<delete dir="${target}" />
 	</target>
 
+	<target name="clean.all" depends="clean">
+		<ant antfile="build.xml" target="com.signavio.api.clean" dir="${dir.api}" />
+		<ant antfile="build.xml" target="clean" dir="${config}" />
+		<ant antfile="build.xml" target="com.signavio.editor.clean" dir="${editor}" />
+		<ant antfile="build.xml" target="com.signavio.libs.clean" dir="${libs}" />
+		<ant antfile="build.xml" target="com.signavio.platform.clean" dir="${platform}" />
+		<ant antfile="build.xml" target="explorer.clean" dir="${explorer}" />
+	</target>
+
 	<target name="configure-applications">
 		<ant antfile="build.xml" target="com.signavio.configuration.copy" dir="${config}">
 		</ant>
 	</target>
 
-	<target name="prepare-explorer-for-all-in-one-war" depends="configure-applications">
-		<loadfile property="version.js" srcFile="${config}/build/version.js" />
-
-		<copy file="${explorer}/explorer.js" todir="${build}/explorer" />
-		<loadfile property="explorer.js" srcFile="${explorer}/explorer.js" />
-		<echo file="${build}/explorer/explorer.js">${explorer.js}
-			${version.js}
-			Signavio.Config.EXPLORER_PATH		= '/${war}/explorer';
-			Signavio.Config.EDITOR_PATH			= '/${war}/editor';
-			Signavio.Config.BACKEND_PATH		= '/${war}/p';
-			Signavio.Config.LIBS_PATH			= '/${war}/libs';
-
-			Signavio.Config.DIAGRAMS_IMAGE_PATH = Signavio.Config.EXPLORER_PATH + "/src/img"
-			Signavio.Config.STENCILSET_EXTENSION_PATH = Signavio.Config.EDITOR_PATH + "/stencilsets/extensions/";
-			Signavio.Config.PATH 				= Signavio.Config.EXPLORER_PATH + '/src/javascript';
-			Signavio.Config.PLUGIN_PATH 		= Signavio.Config.EXPLORER_PATH + '/src/javascript/plugins';
-			Signavio.Config.EDITOR_HANDLER_URI 	= Signavio.Config.BACKEND_PATH + "/editor";
-			Signavio.Config.STENCILSET_URI		= Signavio.Config.BACKEND_PATH + "/editor_stencilset";
-			Signavio.Config.PLUGIN_CONFIG 		= Signavio.Config.BACKEND_PATH + "/explorer_plugins";
-			Signavio.Config.USE_CACHE			= false;
-			Signavio.Config.REMOVE_ON_DELETE	= true;
-			Signavio.Config.HIDE_NOTIFICATION	= true;
-		</echo>
+	<target name="prepare-explorer-for-all-in-one-war-concat">
+		<concat destfile="${build}/explorer/explorer.js">
+			<path>
+				<pathelement location="${explorer}/explorer.js" />
+				<pathelement location="${config}/build/version.js" />
+				<pathelement location="${explorer}/one-war.js" />
+			</path>
+			<filterchain>
+				<expandproperties />
+			</filterchain>
+		</concat>	
 	</target>
-
 
 	<!-- TARGETS FOR ALL-IN-ONE WAR FILE -->
 	<target name="undeploy-all-in-one-war-from-tomcat">
@@ -56,13 +53,16 @@
 		<delete dir="${dir-jboss-webapps}/${war}.war" />
 	</target>
 
-	<target name="build-all-in-one-war" depends="clean, configure-applications, prepare-explorer-for-all-in-one-war">
+	<target name="build-all-in-one-war" depends="clean, configure-applications, prepare-explorer-for-all-in-one-war-concat">
 
 		<mkdir dir="${target}" />
 
 		<!-- Prepare Editor -->
 		<ant antfile="build.xml" target="com.signavio.editor.build" dir="${editor}" inheritall="false">
 		</ant>
+
+		<!-- Prepare Explorer -->
+		<ant antfile="build.xml" target="explorer.build" dir="${explorer}" />
 
 		<!-- Prepare Platform -->
 		<ant antfile="build.xml" target="com.signavio.platform.compile" dir="${platform}" inheritall="false" />
@@ -130,7 +130,7 @@
 		</ant>
 	</target>
 
-	<target name="build-explorer-war" depends="prepare-explorer-for-all-in-one-war">
+	<target name="build-explorer-war" depends="prepare-explorer-for-all-in-one-war-concat">
 		<mkdir dir="${target}" />
 		<war destfile="${target}/explorer.war" webxml="${explorer}/web.xml">
 

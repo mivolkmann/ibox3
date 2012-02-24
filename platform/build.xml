@@ -11,14 +11,31 @@
     <property name="dir-lib-buildtime" value="lib"/>
 	<property name="dir-conf" value="conf"/>
 	<property name="dir-conf-classpath" value="${dir-conf}/classpath"/>
+
+	<property name="dir.main" value=".." />
+
+	<loadproperties srcfile="${dir.main}/build.properties" />
+
+	<property name="dir.global.conf" value="${dir.main}/configuration" />
+	<property name="dir.global.conf.editor" value="${dir.global.conf}/${configuration}/editor" />
       
     <!-- TARGETS (alphabetized) -->
     
 	<target name="com.signavio.platform.clean">
-	        <delete dir="${dir-target}"/>
+		<delete dir="${dir-target}"/>
+		<delete file="${dir-webcontent}/WEB-INF/xml/editor/plugins.xml" />
+		<delete verbose="true">
+			<fileset dir="${dir-webcontent}/WEB-INF/json" includes="*.json" />
+		</delete>
+	</target>
+
+	<target name="platform.config" >
+		<copy file="${dir.global.conf.editor}/plugins.xml" todir="${dir-webcontent}/WEB-INF/xml/editor" />
+		<copy file="${dir.global.conf.editor}/stencilsets.json" todir="${dir-webcontent}/WEB-INF/json" />
+		<copy file="${dir.global.conf.editor}/extensions.json" todir="${dir-webcontent}/WEB-INF/json" />
 	</target>
     
-    <target name="com.signavio.platform.compile" depends="com.signavio.platform.clean">
+    <target name="com.signavio.platform.compile" depends="com.signavio.platform.clean, platform.config">
         <mkdir dir="${dir-classes}"/>
 		<javac srcdir="${dir-src}" destdir="${dir-classes}" debug="on" target="1.5">
             <classpath id="libs">
@@ -32,7 +49,12 @@
         </javac>
 		
 		<copy todir="${dir-classes}">
-			<fileset dir="${dir-conf-classpath}" includes="**/*"/>
+			<fileset dir="${dir-conf-classpath}" includes="**/*">
+				<exclude name="*.template" />
+			</fileset>
+			<filterchain>
+				<expandproperties />
+			</filterchain>
 		</copy>
     </target>
 	
