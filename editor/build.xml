@@ -18,8 +18,7 @@
 	<property name="dir.conf.editor" value="${dir.conf}/${configuration}/editor" />
 	<property name="dir.conf.build" value="${dir.conf}/build" />
 
-	<!-- parses plugin xml-->
-	<xmlproperty file="${src}/scripts/Plugins/plugins.xml" collapseAttributes="true" />
+	
 
 	<!-- Targets for oryx javascript documentation ****************************************************** -->
 	<path id="jsdoc.classpath">
@@ -64,6 +63,9 @@
 		<copy file="${dir.conf.editor}/stencilsets.json" todir="data/stencilsets/" />
 		<copy file="${dir.conf.editor}/extensions.json" todir="data/stencilsets/extensions/" />
 		<copy file="${dir.conf.build}/version.js" todir="${src}/scripts/Plugins/" overwrite="true" />
+
+		<!-- parses plugin xml-->
+		<xmlproperty file="${src}/scripts/Plugins/plugins.xml" collapseAttributes="true" />
 	</target>
 
 	<target name="com.signavio.editor.copy.staticressources" depends="editor.copy.configuration">

@@ -49,9 +49,7 @@
         </javac>
 		
 		<copy todir="${dir-classes}">
-			<fileset dir="${dir-conf-classpath}" includes="**/*">
-				<exclude name="*.template" />
-			</fileset>
+			<fileset dir="${dir-conf-classpath}" includes="**/*" />
 			<filterchain>
 				<expandproperties />
 			</filterchain>
