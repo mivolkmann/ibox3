@@ -24,12 +24,13 @@
 	<target name="com.signavio.platform.clean">
 		<delete dir="${dir-target}"/>
 		<delete file="${dir-webcontent}/WEB-INF/xml/editor/plugins.xml" />
-		<delete verbose="true">
+		<delete verbose="true" quiet="true">
 			<fileset dir="${dir-webcontent}/WEB-INF/json" includes="*.json" />
 		</delete>
 	</target>
 
 	<target name="platform.config" >
+		<mkdir dir="${dir-webcontent}/WEB-INF/json" />
 		<copy file="${dir.global.conf.editor}/plugins.xml" todir="${dir-webcontent}/WEB-INF/xml/editor" />
 		<copy file="${dir.global.conf.editor}/stencilsets.json" todir="${dir-webcontent}/WEB-INF/json" />
 		<copy file="${dir.global.conf.editor}/extensions.json" todir="${dir-webcontent}/WEB-INF/json" />
